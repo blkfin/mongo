@@ -1,0 +1,51 @@
+services:
+    primary:
+        restart: always
+        build: ./primary
+        container_name: primary
+        volumes:
+        - dataP:/data/db
+        expose:
+        - "27017"
+        entrypoint: [ "/usr/bin/mongod", "--replSet", "rsmongo", "--bind_ip_all"]
+
+    secondary1:
+        image: mongo:4.4.9
+        restart: always
+        container_name: secondary1
+        volumes:
+        - dataS1:/data/db
+        expose:
+        - "27017"
+        entrypoint: [ "/usr/bin/mongod", "--replSet", "rsmongo", "--bind_ip_all"]
+      
+    secondary2:
+        image: mongo:4.4.9
+        restart: always
+        container_name: secondary2
+        volumes:
+        - dataS2:/data/db
+        expose:
+        - "27017"
+        entrypoint: [ "/usr/bin/mongod", "--replSet", "rsmongo", "--bind_ip_all" ]
+
+        
+    ycsb:
+        image: bkfin/ycsb
+        build: ./ycsb
+        container_name: ycsb
+        volumes:
+        - dataYcsb:/data/db
+        entrypoint: ["sleep", "100000"]
+
+    pymongo:
+        image: python
+        build: ./pymongo
+        container_name: pymongo
+        entrypoint: ["sleep", "100000"]       
+
+volumes:
+    dataP:
+    dataS1:
+    dataS2: 
+    dataYcsb:
